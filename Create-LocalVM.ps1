@@ -43,10 +43,9 @@ Param(
     [Parameter(Mandatory=$True,Position=1)][string]$VMName,
     [Parameter(Mandatory=$True,Position=2)][string]$Path,
     [string]$ISO,
-    [Parameter(ParameterSetName="TemplateNew", Mandatory=$True)][Parameter(ParameterSetName="TemplateVHD", Mandatory=$True)][ValidateSet('LinuxLegacy','LinuxClient','LinuxServer','WindowsClient','WindowsServer')][string]$Template,
-    [Parameter(ParameterSetName="TemplateVHD", Mandatory=$True)][Parameter(ParameterSetName="CustomVHD", Mandatory=$True)][Parameter(ParameterSetName="CustomVHDDyn", Mandatory=$True)][string]$ReferenceVHD,
-    [Parameter(ParameterSetName="TemplateVHD", Mandatory=$True)][Parameter(ParameterSetName="CustomVHD", Mandatory=$True)][Parameter(ParameterSetName="CustomVHDDyn", Mandatory=$True)][ValidateSet('Difference','Copy')][string]$VHDMethod,
-    [Parameter(ParameterSetName="CustomVHD")][Parameter(ParameterSetName="CustomNew")][Parameter(ParameterSetName="CustomVHDDyn")][Parameter(ParameterSetName="CustomNewDyn")][Parameter(ParameterSetName="TemplateNew", Mandatory=$True)][Parameter(ParameterSetName="TemplateVHD", Mandatory=$True)][string]$VMSwitch,
+    [Parameter(ParameterSetName="CustomVHD", Mandatory=$True)][Parameter(ParameterSetName="CustomVHDDyn", Mandatory=$True)][string]$ReferenceVHD,
+    [Parameter(ParameterSetName="CustomVHD", Mandatory=$True)][Parameter(ParameterSetName="CustomVHDDyn", Mandatory=$True)][ValidateSet('Difference','Copy')][string]$VHDMethod,
+    [Parameter(ParameterSetName="CustomVHD")][Parameter(ParameterSetName="CustomNew")][Parameter(ParameterSetName="CustomVHDDyn")][Parameter(ParameterSetName="CustomNewDyn")][string]$VMSwitch,
     [Parameter(ParameterSetName="CustomVHD")][Parameter(ParameterSetName="CustomNew")][Parameter(ParameterSetName="CustomVHDDyn")][Parameter(ParameterSetName="CustomNewDyn")][System.Int64]$OSDriveSize=60GB,
     [Parameter(ParameterSetName="CustomNew")][Parameter(ParameterSetName="CustomNewDyn")][switch]$ThickProvision,
     [Parameter(ParameterSetName="CustomVHD")][Parameter(ParameterSetName="CustomNew", Mandatory=$true)][switch]$FixedMemory,
@@ -89,55 +88,6 @@ Param(
         }else{
             Write-Error "Invalid VM switch name specified '$VMSwitch'" -Category ResourceUnavailable
             Break
-        }
-    }
-#endregion
-
-#region Templates
-    if($PSCmdlet.ParameterSetName -in 'TemplateVHD','TemplateNew'){
-        if($Template -eq 'WindowsClient'){
-            $OSDriveSize = 120GB
-            $ThickProvision = $False
-            $FixedMemory = $False
-            $Memory = 1GB
-            $MinMemory = 256MB
-            $MaxMemory = 2GB
-            $generation = 2
-            $SecureBoot = 'on'
-        }
-        if($Template -eq 'WindowsServer'){
-            $OSDriveSize = 60GB
-            $ThickProvision = $False
-            $FixedMemory = $False
-            $Memory = 1GB
-            $MinMemory = 512MB
-            $MaxMemory = 1GB
-            $generation = 2
-            $SecureBoot = 'on'
-        }
-        if($Template -eq 'LinuxClient'){
-            $OSDriveSize = 60GB
-            $ThickProvision = $False
-            $FixedMemory = $True
-            $Memory = 1GB
-            $generation = 2
-            $SecureBoot = 'off'
-        }
-        if($Template -eq 'LinuxServer'){
-            $OSDriveSize = 30GB
-            $ThickProvision = $False
-            $FixedMemory = $True
-            $Memory = 512MB
-            $generation = 2
-            $SecureBoot = 'off'
-        }
-        if($Template -eq 'LinuxLegacy'){
-            $OSDriveSize = 30GB
-            $ThickProvision = $False
-            $FixedMemory = $True
-            $Memory = 512MB
-            $generation = 1
-            $SecureBoot = 'off'
         }
     }
 #endregion
