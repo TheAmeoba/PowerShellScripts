@@ -3,11 +3,11 @@
         Removes Policy Assignments and custom Definitions scoped to a resource group
 
     .DESCRIPTION
-        Requires azure login before running script (e.g. Login-AzureRMAccount)
         Will find policy assignments scoped to a reource group and remove them, 
             along with any custom definitions used by those assignments
 
         Resource locks should be removed before running script
+        Requires azure login before running script (e.g. Login-AzureRMAccount)
 
     .PARAMETER ResourceGroup
         Name of the resource group that policies are scoped to
@@ -19,6 +19,10 @@
     .PARAMETER auto
         Skips confirmation. required if running headless
 
+    .PARAMETER removeallcustdef
+        If specified, script will search for all custom definitions and try to removed them. If they are still in use they will cause an error
+        Useful if you've deleted the assignment and want to clean up a test environement
+
     .EXAMPLE
         remove-rgpolicyassignment.ps1 -ResourceGroup "testrgname"
 
@@ -26,10 +30,11 @@
         Author: Simon Baker
         Created: 2018-11-02
         Modified: 2018-11-02
-        Version: 1.1
+        Version: 1.2
 
         Change Log:
             1.1 - Added Try-catch to address mid operation failures
+            1.2 - Added function to remove all custom definitions
 #>
 
 [CmdletBinding(SupportsShouldProcess=$True)]
