@@ -24,17 +24,18 @@
         Useful if you've deleted the assignment and want to clean up a test environement
 
     .EXAMPLE
-        remove-rgpolicyassignment.ps1 -ResourceGroup "testrgname"
+        remove-rgpolicyassignment.ps1 -ResourceGroup "testrgname" -Verbose
 
     .NOTES
         Author: Simon Baker
         Created: 2018-11-02
-        Modified: 2018-11-02
-        Version: 1.2
+        Modified: 2018-11-08
+        Version: 1.3
 
         Change Log:
             1.1 - Added Try-catch to address mid operation failures
             1.2 - Added function to remove all custom definitions
+            1.3 - Bug fix: implemented switch to prompt for removal of all custom policy definitions
 #>
 
 [CmdletBinding(SupportsShouldProcess=$True)]
@@ -97,7 +98,7 @@ try{
 # no try catch here so script will report error for each definition that fails
 Write-Verbose "Checking for remaining definitions..."
 $remainingDefs = Get-AzureRmPolicyDefinition | Where-Object {($_.Properties.policyType -like "Custom")}
-if($remainingDefs){
+if($remainingDefs -and $removeallcustdef){
     Write-Host "$($remainingDefs.count) remaining custom definitions"
     if(!$auto){$continue = Read-Host "Continue with removal? [yes/no]"}else{$continue = "yes"}
     if($continue -eq "yes"){
@@ -106,6 +107,8 @@ if($remainingDefs){
             Remove-AzureRmPolicyDefinition -Id $_.PolicyDefinitionId -Force
         }
     }else{
-        Write-Verbose "Canceling removal..."
+        Write-Verbose "Cancel removal..."
     }
 }
+
+Write-Verbose "Script Completed"
